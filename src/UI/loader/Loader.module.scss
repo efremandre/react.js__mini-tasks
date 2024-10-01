@@ -1,0 +1,27 @@
+.loaderWrapper {
+  position: absolute;
+  z-index: 6;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, .3);
+}
+
+.loader {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid green;
+  border-bottom-color: transparent;
+  animation: loader 2s linear infinite;
+}
+
+@keyframes loader {
+  to {
+    transform: rotate(360deg);
+  }
+}
