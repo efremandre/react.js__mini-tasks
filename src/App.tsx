@@ -1,28 +1,45 @@
-import CreateTask from "./components/CreateTask.tsx";
-import TasksList from "./components/TasksList.tsx";
-import TaskItem from "./components/TaskItem.tsx";
-import {useSelector} from "react-redux";
-import {RootState} from "./store";
-import AlertPopup from "./components/AlertPopup.tsx";
+import React, {ChangeEvent, useState} from "react";
+import {addInput, addText, clearInput} from "./store/textSlice.ts";
+import {useAppDispatch, useAppSelector} from "./store/hooks.ts";
 
 function App() {
-    const tasks = useSelector((state: RootState) => state.tasks.tasks)
+    const [placeholder, setPlaceholder] = useState('Введите текст')
+    const inputValue = useAppSelector((state) => state.text.inputValue)
+    const texts = useAppSelector((state) => state.text.texts)
+    const dispatch = useAppDispatch()
+    const textChanges = (ev: ChangeEvent<HTMLInputElement>) => {
+        dispatch(addInput(ev.currentTarget.value))
+    }
+    const getText = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+        if (ev.code === 'Enter' && inputValue.trim()) {
+            dispatch(addText(inputValue))
+            dispatch(clearInput(''))
+            setPlaceholder('Введите текст')
+        } else if (!inputValue.trim()) {
+            setPlaceholder('Не должно быть пустым')
+        }
+    }
 
-    return (
+    const handleClearInput = () => {
+        dispatch(clearInput(''))
+        setPlaceholder('Введите текст')
+    }
+
+        return (
         <>
-            <AlertPopup />
-            <div style={{
-                maxWidth: '600px',
-                margin: '0 auto',
-                padding: '50px 10px 10px'
-            }}>
-                <CreateTask/>
-                <TasksList>
-                    {tasks.map(task =>
-                        <TaskItem key={task.id}
-                                  task={task}
-                        />)}
-                </TasksList>
+            <input type="text"
+                   value={inputValue}
+                   placeholder={placeholder}
+                   onChange={textChanges}
+                   onKeyDown={getText}
+            />
+            <button onClick={handleClearInput}>x</button>
+            <div>
+                <ul>
+                    {
+                        texts.map(item => <li key={item.id}>{item.item}</li>)
+                    }
+                </ul>
             </div>
         </>
     )
